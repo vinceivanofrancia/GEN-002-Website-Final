@@ -125,6 +125,7 @@
 
         <!-- PAGE: HOME -->
         <section id="home" class="page-section active fade-in">
+            <!-- Hero Section -->
             <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 text-white min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden">
                 <!-- Abstract Background Elements -->
                 <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
@@ -152,6 +153,52 @@
                             Meet the Team
                         </button>
                     </div>
+                    
+                    <!-- Scroll indicator -->
+                    <div class="mt-16 w-full flex justify-center animate-bounce opacity-50">
+                        <i data-lucide="chevron-down" class="text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Overview & Disclaimer Section (New Addition) -->
+            <div class="bg-white py-16 px-6 border-b border-slate-200">
+                <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                    
+                    <!-- Project Overview -->
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-blue-100 text-blue-600 rounded-lg mr-4">
+                                <i data-lucide="info" size="24"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900">Project Overview</h2>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-700 mb-2">The Philippine Flood Control Crisis</h3>
+                        <p class="text-gray-600 leading-relaxed text-justify">
+                            This website is dedicated to analyzing the critical issues, controversies, and infrastructure challenges surrounding flood control measures in the Philippines. It aims to raise awareness about the impact of these issues on our communities and national development.
+                        </p>
+                    </div>
+
+                    <!-- Academic Disclaimer -->
+                    <div class="bg-slate-50 p-8 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <div class="p-2 bg-slate-200 text-slate-600 rounded-lg mr-3">
+                                <i data-lucide="graduation-cap" size="20"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800">Academic Disclaimer</h2>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                            This platform was created in partial fulfillment of the requirements for the subject:
+                        </p>
+                        <div class="font-medium text-slate-800 border-l-4 border-blue-500 pl-4 py-2 bg-white shadow-sm mb-4 rounded-r-md">
+                            GEN-002: Understanding the Self
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <span class="font-semibold text-slate-700">Submitted to:</span> <br/>
+                            Brittany Marcellano Ventura
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -159,7 +206,7 @@
         <!-- PAGE: PROFILE -->
         <section id="profile" class="page-section fade-in bg-slate-50">
             <div class="py-20 px-6">
-                <div class="max-w-5xl mx-auto">
+                <div class="max-w-6xl mx-auto">
                     <div class="text-center mb-12">
                         <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Website Owners' Profile</h2>
                         <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -168,7 +215,9 @@
                         </p>
                     </div>
                     
+                    <!-- Grid of 9 Members -->
                     <div class="grid md:grid-cols-3 gap-6">
+                        
                         <!-- Member 1 -->
                         <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                             <div class="flex items-center mb-4">
@@ -225,6 +274,121 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Member 4 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 4</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Content Writer</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Words have the power to change perspectives."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Listening to calming music.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 5 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 5</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Data Analyst</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Data tells the story that words sometimes hide."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Playing basketball on weekends.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 6 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 6</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Graphic Designer</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Visuals make complex issues easier to understand."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Sketching in the park.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 7 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 7</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Editor</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Clarity is key to effective communication."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Cooking new recipes.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 8 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 8</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Outreach Coordinator</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Connecting with the community is essential."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Meditation and yoga.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 9 -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800">Student Name 9</h3>
+                                    <p class="text-sm text-blue-600 font-medium">Social Media Manager</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic mb-6 flex-grow">"Social media can be a force for good."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Painting and crafts.
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -234,6 +398,58 @@
         <section id="analysis" class="page-section fade-in bg-white">
             <div class="py-20 px-6">
                 <div class="max-w-4xl mx-auto">
+                    
+                    <!-- ROTATING GALLERY -->
+                    <div class="relative w-full mb-12 rounded-xl overflow-hidden shadow-2xl border border-gray-200 group">
+                        <!-- Slides Container -->
+                        <div id="gallery-track" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                            
+                            <!-- Slide 1 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <!-- Placeholder Image Background -->
+                                <img src="https://placehold.co/800x400/1e293b/white?text=Flooded+Streets+Evidence" alt="Flooding Evidence" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">Visual Evidence: Metro Manila</h3>
+                                    <p class="text-gray-200">Despite billions in funding, main thoroughfares remain impassable.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://placehold.co/800x400/3b82f6/white?text=Incomplete+Dike+Projects" alt="Incomplete Projects" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">The "Ghost Projects"</h3>
+                                    <p class="text-gray-200">Sites marked as "Completed" in reports often show zero construction.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://placehold.co/800x400/94a3b8/white?text=Budget+Allocation+Chart" alt="Budget Chart" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">Budget Misalignment</h3>
+                                    <p class="text-gray-200">Funds are diverted to districts with low flood risk.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Gallery Controls -->
+                        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-left" size="24"></i>
+                        </button>
+                        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-right" size="24"></i>
+                        </button>
+
+                        <!-- Dots Indicator -->
+                        <div class="absolute bottom-4 right-4 flex space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-white opacity-100" id="dot-0"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-1"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-2"></div>
+                        </div>
+                    </div>
+
                     <div class="mb-12 border-l-4 border-blue-600 pl-6">
                         <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">The Issue: A Flood of Corruption?</h2>
                         <p class="text-xl text-gray-500">An analysis of the 2024 Flood Control Scandal</p>
@@ -317,43 +533,98 @@
         <!-- PAGE: SOLUTIONS -->
         <section id="solutions" class="page-section fade-in bg-gradient-to-b from-slate-50 to-white">
             <div class="py-20 px-6">
-                <div class="max-w-5xl mx-auto text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Recommendations & Solutions</h2>
-                    <p class="text-gray-600">Moving from corruption to construction: How we fix the crisis.</p>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                    <!-- Solution 1 -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all">
-                        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-blue-600">
-                            <i data-lucide="file-text" size="28"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Digital Accountability</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            Implement <strong>Blockchain-based procurement</strong>. By digitizing the bidding and payment process, every peso can be tracked in real-time, making "ghost projects" impossible to hide from public audit.
-                        </p>
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 max-w-4xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-6">Recommendations & Solutions</h2>
+                        <p class="text-lg text-gray-600">We propose a multi-faceted approach to fix the flood control crisis, moving from "patchwork politics" to science-based infrastructure.</p>
                     </div>
 
-                    <!-- Solution 2 -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all">
-                        <div class="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-green-600">
-                            <i data-lucide="droplets" size="28"></i>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Solution 1 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                            <div class="mb-6 text-blue-600 bg-blue-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="monitor-check" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">National Flood Control Transparency Portal</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">The biggest enabler of the current scandal is the lack of visibility on project progress.</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-blue-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">Prevent "ghost projects" by mandating a centralized digital portal where every project must have monthly geo-tagged photo updates proving construction progress.</p>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Nature-Based Solutions</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            Shift focus from purely concrete structures to <strong>"Sponge City" concepts</strong>. Restore wetlands, mangroves, and permeable surfaces that naturally absorb water.
-                        </p>
-                    </div>
 
-                    <!-- Solution 3 -->
-                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all">
-                        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-6 text-purple-600">
-                            <i data-lucide="users" size="28"></i>
+                        <!-- Solution 2 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-cyan-500"></div>
+                            <div class="mb-6 text-cyan-600 bg-cyan-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="map" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">River Basin-Based Budgeting</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">Budgets are currently "sliced" into small district contracts, leading to uncoordinated, patchwork dikes.</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-cyan-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">Funding should follow the 18 Major River Basins Master Plan. Projects must be integrated across provinces rather than limited by political district boundaries.</p>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Citizen Oversight</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            Institutionalize <strong>Participatory Auditing</strong>. Allow NGOs and civil society groups to inspect projects during construction ensuring specifications are met before payments are released.
-                        </p>
+
+                        <!-- Solution 3 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                            <div class="mb-6 text-indigo-600 bg-indigo-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Fast-Track High-Impact Projects</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">Major game-changers like the Parañaque Spillway have been delayed while billions are wasted on small dredging.</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">Prioritize securing ODA (e.g., JICA) for the Parañaque Spillway to drain Laguna de Bay directly to Manila Bay, bypassing the clogged Pasig River.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 4 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                            <div class="mb-6 text-purple-600 bg-purple-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="users" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Citizen Participatory Audits</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">The Commission on Audit (COA) is understaffed and cannot physically inspect every dike in remote areas.</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-purple-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">Accredit CSOs and local NGOs as "deputy auditors." Locals must sign a "Certificate of Reality" before final payments are released to contractors.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 5 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                            <div class="mb-6 text-green-600 bg-green-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="sprout" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">"Sponge City" Ordinances</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">Metro Manila is a concrete jungle that prevents rainwater from seeping into the ground.</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-green-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">Mandate Nature-Based Solutions (NbS): rainwater cisterns for subdivisions, permeable pavement for parking lots, and wetland restoration.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 6 -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+                            <div class="mb-6 text-orange-600 bg-orange-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="pen-tool" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">Decouple Design & Construction</h3>
+                            <p class="text-gray-500 text-sm mb-4 flex-grow">Contractors often influence designs to make them cheaper to build, leading to "politicized engineering."</p>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h4 class="text-xs font-bold text-orange-600 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700">The entity that designs the master plan should not be the one building it. Independent firms must design and supervise to ensure blueprint compliance.</p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -412,6 +683,52 @@
         // Initialize Lucide Icons
         lucide.createIcons();
 
+        // --- ROTATING GALLERY LOGIC ---
+        let currentSlide = 0;
+        const slides = 3; // Number of slides
+        const track = document.getElementById('gallery-track');
+        
+        function updateDots() {
+            for (let i = 0; i < slides; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentSlide) {
+                    dot.classList.remove('opacity-50');
+                    dot.classList.add('opacity-100');
+                } else {
+                    dot.classList.remove('opacity-100');
+                    dot.classList.add('opacity-50');
+                }
+            }
+        }
+
+        function showSlide(index) {
+            currentSlide = index;
+            // Loop back if at the end
+            if (currentSlide >= slides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = slides - 1;
+
+            const percent = currentSlide * -100;
+            track.style.transform = `translateX(${percent}%)`;
+            updateDots();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Auto-rotate every 4 seconds
+        setInterval(() => {
+            // Only rotate if the Analysis page is active to save resources/avoid confusion
+            const analysisPage = document.getElementById('analysis');
+            if (analysisPage.classList.contains('active')) {
+                nextSlide();
+            }
+        }, 4000);
+
         // --- SINGLE PAGE APPLICATION LOGIC ---
 
         function showPage(pageId) {
@@ -425,7 +742,6 @@
             const activePage = document.getElementById(pageId);
             if (activePage) {
                 activePage.classList.add('active');
-                // Trigger a reflow to restart animation if needed (optional, simpler to just leave class)
             }
 
             // 3. Update Desktop Navigation Styling
