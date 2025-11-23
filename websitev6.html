@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submerged Funds: Flood Control Crisis</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // This enables manual dark mode toggling
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Fade animation for page transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Custom animations for background blobs */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 6s infinite;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        /* Utility to hide/show pages */
+        .page-section {
+            display: none;
+            min-height: calc(100vh - 64px); /* Full height minus nav */
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        /* --- WEATHER ANIMATIONS --- */
+
+        /* Rain */
+        .rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .raindrop {
+            position: absolute;
+            background-color: rgba(174, 194, 224, 0.6);
+            width: 2px;
+            height: 25px; /* Longer drops for heavier feel */
+            top: -30px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* Lightning Canvas */
+        #lightning-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Behind text, above rain */
+            pointer-events: none;
+        }
+
+        /* Flash Overlay */
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity 0.05s ease-out;
+        }
+
+        /* --- IMAGE WALKING ANIMATION --- */
+        .scene-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; /* Increased height to accommodate the GIF */
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .walker-container {
+            position: absolute;
+            bottom: -20px;
+            left: -150px;
+            width: 115px; 
+            height: auto;
+            opacity: 0.9; 
+            /* Subtle drop shadow to make them stand out against the dark bg */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); 
+        }
+
+        /* Move the entire container across the screen */
+        .walk-across-1 { animation: walkAcross 25s linear infinite; }
+        /* Removed transform: scale(...) from below lines */
+        .walk-across-2 { animation: walkAcross 35s linear infinite; animation-delay: 12s; opacity: 0.7; }
+        .walk-across-3 { animation: walkAcross 28s linear infinite; animation-delay: 5s; opacity: 0.8; }
+
+        @keyframes walkAcross {
+            from { left: -150px; }
+            to { left: 110vw; }
+        }
+
+        .walker-image {
+            width: 100%;
+            height: auto;
+            /* No extra bobbing animation needed since it is a GIF */
+        }
+
+    </style>
+</head>
+<body class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-200 flex flex-col min-h-screen transition-colors duration-300">
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 glass-nav text-white shadow-lg border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Site Title -->
+                <button onclick="showPage('home')" class="flex items-center space-x-2 font-bold text-xl tracking-tight hover:opacity-80 transition focus:outline-none">
+                    <i data-lucide="droplets" class="text-blue-400"></i>
+                    <span>Submerged<span class="text-blue-400">Funds</span></span>
+                </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <button onclick="showPage('home')" class="nav-link text-blue-400 flex items-center space-x-1 transition-colors" id="nav-home">
+                        <i data-lucide="droplets" size="18"></i>
+                        <span>Home</span>
+                    </button>
+                    <button onclick="showPage('profile')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-profile">
+                        <i data-lucide="users" size="18"></i>
+                        <span>Our Team</span>
+                    </button>
+                    <button onclick="showPage('analysis')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-analysis">
+                        <i data-lucide="shield-alert" size="18"></i>
+                        <span>The Issue</span>
+                    </button>
+                    <button onclick="showPage('solutions')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-solutions">
+                        <i data-lucide="lightbulb" size="18"></i>
+                        <span>Solutions</span>
+                    </button>
+                    <button onclick="showPage('sources')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-sources">
+                        <i data-lucide="book-open" size="18"></i>
+                        <span>Sources</span>
+                    </button>
+
+                    <!-- Dark Mode Toggle (Desktop) -->
+                    <button onclick="toggleTheme()" class="ml-4 p-2 rounded-full bg-slate-700 hover:bg-slate-600 text-yellow-400 transition-colors border border-slate-600" aria-label="Toggle Dark Mode">
+                        <i id="theme-icon-desktop" data-lucide="sun" size="18"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Controls -->
+                <div class="md:hidden flex items-center space-x-4">
+                    <!-- Dark Mode Toggle (Mobile) -->
+                    <button onclick="toggleTheme()" class="text-yellow-400 focus:outline-none">
+                        <i id="theme-icon-mobile" data-lucide="sun" size="20"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i data-lucide="menu" size="24"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 pb-4 px-4 shadow-inner absolute w-full top-16 left-0 z-40 border-t border-slate-700">
+            <button onclick="showPage('home')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-blue-400 bg-slate-700/50" id="mobile-nav-home">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="droplets" size="18"></i>
+                    <span>Home</span>
+                </span>
+            </button>
+            <button onclick="showPage('profile')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-profile">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="users" size="18"></i>
+                    <span>Our Team</span>
+                </span>
+            </button>
+            <button onclick="showPage('analysis')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-analysis">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="shield-alert" size="18"></i>
+                    <span>The Issue</span>
+                </span>
+            </button>
+            <button onclick="showPage('solutions')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-solutions">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="lightbulb" size="18"></i>
+                    <span>Solutions</span>
+                </span>
+            </button>
+            <button onclick="showPage('sources')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-sources">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="book-open" size="18"></i>
+                    <span>Sources</span>
+                </span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow relative">
+
+        <!-- PAGE: HOME -->
+        <section id="home" class="page-section active fade-in">
+            <!-- Hero Section -->
+            <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 text-white min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden" id="hero-section">
+                
+                <!-- NEW: Realistic Lightning Components -->
+                <canvas id="lightning-canvas"></canvas>
+                <div id="flash-overlay" class="flash-overlay"></div>
+
+                <!-- NEW: Rain Container -->
+                <div id="rain-container" class="rain-container"></div>
+
+                <!-- Abstract Background Elements (Existing) -->
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+                    <div class="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl animate-pulse-slow"></div>
+                    <div class="absolute bottom-10 right-10 w-96 h-96 bg-cyan-600 rounded-full blur-3xl animate-pulse-slow"></div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="relative z-20 text-center px-6 max-w-4xl mx-auto">
+                    <div class="inline-block mb-4 px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-sm font-semibold tracking-wider uppercase">
+                        Political Consciousness Project
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tighter drop-shadow-lg">
+                        The Flood Control <br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Crisis Analysis</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto font-light drop-shadow-md">
+                        Billions of pesos allocated. Thousands of projects planned. 
+                        <strong class="text-white font-semibold"> Why do the waters still rise?</strong>
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="showPage('analysis')" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/50 flex items-center justify-center cursor-pointer">
+                            Read the Analysis <i data-lucide="chevron-right" class="ml-2"></i>
+                        </button>
+                        <button onclick="showPage('profile')" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all border border-slate-500 flex items-center justify-center cursor-pointer">
+                            Meet the Team
+                        </button>
+                    </div>
+                    
+                    <!-- Scroll indicator -->
+                    <div class="mt-16 w-full flex justify-center animate-bounce opacity-50">
+                        <i data-lucide="chevron-down" class="text-white"></i>
+                    </div>
+                </div>
+
+                <!-- NEW: GIF Walking Animation Scene -->
+                <div class="scene-bottom">
+                    
+                    <!-- Walker 1 -->
+                    <div class="walker-container walk-across-1">
+                        <img src="https://img1.picmix.com/output/stamp/normal/9/8/0/3/1553089_01cae.gif" alt="Walking Silhouette" class="walker-image">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Project Overview & Disclaimer Section -->
+            <div class="bg-white dark:bg-slate-900 py-16 px-6 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                    
+                    <!-- Project Overview -->
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg mr-4">
+                                <i data-lucide="info" size="24"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Project Overview</h2>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">The Philippine Flood Control Crisis</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            This website is dedicated to analyzing the critical issues, controversies, and infrastructure challenges surrounding flood control measures in the Philippines. It aims to raise awareness about the impact of these issues on our communities and national development.
+                        </p>
+                    </div>
+
+                    <!-- Academic Disclaimer -->
+                    <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+                        <div class="flex items-center mb-4">
+                            <div class="p-2 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg mr-3">
+                                <i data-lucide="graduation-cap" size="20"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Academic Disclaimer</h2>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">
+                            This platform was created in partial fulfillment of the requirements for the subject:
+                        </p>
+                        <div class="font-medium text-slate-800 dark:text-slate-100 border-l-4 border-blue-500 pl-4 py-2 bg-white dark:bg-slate-700 shadow-sm mb-4 rounded-r-md">
+                            GEN-002: Understanding the Self
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-semibold text-slate-700 dark:text-slate-300">Submitted to:</span> <br/>
+                            Brittany Marcellano Ventura
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: PROFILE -->
+        <section id="profile" class="page-section fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Website Owners' Profile</h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            We are students dedicated to bringing transparency to social issues. 
+                            Balancing academic rigor with personal well-being is part of our journey.
+                        </p>
+                    </div>
+                    
+                    <!-- Grid of 9 Members -->
+                    <div class="grid md:grid-cols-3 gap-6">
+                        
+                        <!-- Template for Member Card (Repeated) -->
+                        <!-- NOTE: Added dark:bg-slate-800 dark:border-slate-700 and text updates -->
+                        
+                        <!-- Member 1 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 1</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Lead Researcher</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Political awareness starts with asking where the money goes."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Daily 30-minute digital detox & jogging.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 2 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 2</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Web Developer</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Design is not just how it looks, but how it communicates truth."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Reading fiction novels before sleep.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 3 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 3</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Fact Checker</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"In an era of misinformation, citations are our best defense."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Weekend hiking and nature photography.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 4 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 4</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Content Writer</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Words have the power to change perspectives."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Listening to calming music.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 5 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 5</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Data Analyst</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Data tells the story that words sometimes hide."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Playing basketball on weekends.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 6 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 6</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Graphic Designer</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Visuals make complex issues easier to understand."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Sketching in the park.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 7 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 7</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Editor</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Clarity is key to effective communication."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Cooking new recipes.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 8 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 8</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Outreach Coordinator</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Connecting with the community is essential."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Meditation and yoga.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Member 9 -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl">S</div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Student Name 9</h3>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">Social Media Manager</p>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300 italic mb-6 flex-grow">"Social media can be a force for good."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Self-Care Practice</p>
+                                <p class="text-slate-700 dark:text-slate-200 flex items-center">
+                                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                    Painting and crafts.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: ANALYSIS -->
+        <section id="analysis" class="page-section fade-in bg-white dark:bg-slate-950 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    
+                    <!-- ROTATING GALLERY -->
+                    <div class="relative w-full mb-12 rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-slate-700 group">
+                        <!-- Slides Container -->
+                        <div id="gallery-track" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                            
+                            <!-- Slide 1 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <!-- Placeholder Image Background -->
+                                <img src="https://placehold.co/800x400/1e293b/white?text=Flooded+Streets+Evidence" alt="Flooding Evidence" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">Visual Evidence: Metro Manila</h3>
+                                    <p class="text-gray-200">Despite billions in funding, main thoroughfares remain impassable.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://placehold.co/800x400/3b82f6/white?text=Incomplete+Dike+Projects" alt="Incomplete Projects" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">The "Ghost Projects"</h3>
+                                    <p class="text-gray-200">Sites marked as "Completed" in reports often show zero construction.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://placehold.co/800x400/94a3b8/white?text=Budget+Allocation+Chart" alt="Budget Chart" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">Budget Misalignment</h3>
+                                    <p class="text-gray-200">Funds are diverted to districts with low flood risk.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Gallery Controls -->
+                        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-left" size="24"></i>
+                        </button>
+                        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-right" size="24"></i>
+                        </button>
+
+                        <!-- Dots Indicator -->
+                        <div class="absolute bottom-4 right-4 flex space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-white opacity-100" id="dot-0"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-1"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12 border-l-4 border-blue-600 pl-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">The Issue: A Flood of Corruption?</h2>
+                        <p class="text-xl text-gray-500 dark:text-gray-400">An analysis of the 2024 Flood Control Scandal</p>
+                    </div>
+
+                    <div class="space-y-12">
+                        <!-- Topic 1 -->
+                        <div class="prose max-w-none">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
+                                <i data-lucide="trending-up" class="text-red-500 mr-3"></i>
+                                The Budget vs. The Reality
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                Under the current administration, the Department of Public Works and Highways (DPWH) was allocated a staggering 
+                                <span class="font-bold text-slate-900 dark:text-slate-900 bg-yellow-100 px-1 mx-1 rounded">₱545 billion</span> for flood control projects. 
+                                Despite this massive funding—larger than the budget for agriculture or defense—Metro Manila and nearby provinces were submerged during Typhoon Carina in 2024.
+                            </p>
+                            <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>
+                                    <strong class="text-slate-900 dark:text-white">421+ "Ghost Projects":</strong> Senate hearings revealed hundreds of projects that were paid for but either never existed or were abandoned.
+                                </li>
+                                <li>
+                                    <strong class="text-slate-900 dark:text-white">Zero Allocations in Critical Areas:</strong> Investigations found that flood-prone towns in Bulacan received zero flood control infrastructure, while funds were diverted to non-critical districts favored by politicians.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Topic 2 -->
+                        <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+                                <i data-lucide="shield-alert" class="text-orange-500 mr-3"></i>
+                                Allegations of Systemic Corruption
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                The core of the scandal involves allegations of a "kickback" system embedded in the infrastructure sector.
+                            </p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">The 20-40% Kickback Scheme:</strong> Witnesses at Senate hearings testified that up to 40% of a project's total cost is siphoned off as bribes to legislators and district engineers.
+                                    </span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">Substandard Materials:</strong> To recover the cost of bribes, contractors allegedly use cheaper, substandard cement and steel, resulting in dikes and spillways that crumble under pressure.
+                                    </span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">Monopoly of Contracts:</strong> A specific group of contractors reportedly cornered billions in contracts.
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Topic 3 -->
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-4">The Human Cost</h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
+                                The failure is not just financial; it is humanitarian. The lack of effective flood control has led to:
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h4 class="font-bold text-blue-900 dark:text-blue-300">Displacement</h4>
+                                    <p class="text-sm text-blue-800 dark:text-blue-200">Thousands of families in Metro Manila and Bulacan lose their homes annually due to rising waters.</p>
+                                </div>
+                                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                                    <h4 class="font-bold text-blue-900 dark:text-blue-300">Economic Loss</h4>
+                                    <p class="text-sm text-blue-800 dark:text-blue-200">Billions in agricultural crops and business revenue are wiped out, keeping the poorest sectors in poverty.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: SOLUTIONS -->
+        <section id="solutions" class="page-section fade-in bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 max-w-4xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">Recommendations & Solutions</h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400">We propose a multi-faceted approach to fix the flood control crisis, moving from "patchwork politics" to science-based infrastructure.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Solution 1 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                            <div class="mb-6 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="monitor-check" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">National Flood Control Transparency Portal</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">The biggest enabler of the current scandal is the lack of visibility on project progress.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Prevent "ghost projects" by mandating a centralized digital portal where every project must have monthly geo-tagged photo updates proving construction progress.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 2 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-cyan-500"></div>
+                            <div class="mb-6 text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="map" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">River Basin-Based Budgeting</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Budgets are currently "sliced" into small district contracts, leading to uncoordinated, patchwork dikes.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Funding should follow the 18 Major River Basins Master Plan. Projects must be integrated across provinces rather than limited by political district boundaries.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 3 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                            <div class="mb-6 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Fast-Track High-Impact Projects</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Major game-changers like the Parañaque Spillway have been delayed while billions are wasted on small dredging.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Prioritize securing ODA (e.g., JICA) for the Parañaque Spillway to drain Laguna de Bay directly to Manila Bay, bypassing the clogged Pasig River.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 4 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                            <div class="mb-6 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="users" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Citizen Participatory Audits</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">The Commission on Audit (COA) is understaffed and cannot physically inspect every dike in remote areas.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Accredit CSOs and local NGOs as "deputy auditors." Locals must sign a "Certificate of Reality" before final payments are released to contractors.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 5 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                            <div class="mb-6 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="sprout" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">"Sponge City" Ordinances</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Metro Manila is a concrete jungle that prevents rainwater from seeping into the ground.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Mandate Nature-Based Solutions (NbS): rainwater cisterns for subdivisions, permeable pavement for parking lots, and wetland restoration.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 6 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+                            <div class="mb-6 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="pen-tool" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Decouple Design & Construction</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Contractors often influence designs to make them cheaper to build, leading to "politicized engineering."</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">The entity that designs the master plan should not be the one building it. Independent firms must design and supervise to ensure blueprint compliance.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: SOURCES -->
+        <section id="sources" class="page-section fade-in bg-slate-900 text-gray-400">
+            <div class="py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <i data-lucide="book-open" class="mr-3 text-blue-500"></i>
+                        References & Credible Sources
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="border-b border-slate-700 pb-4">
+                            <p class="text-white font-semibold text-lg mb-1">"Flood control projects scandal in the Philippines"</p>
+                            <p class="text-sm mb-2">Wikipedia & Senate Blue Ribbon Committee Reports (2024-2025). Detailed timeline of allegations regarding ghost projects.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm">Accessed November 20, 2025</a>
+                        </div>
+                        
+                        <div class="border-b border-slate-700 pb-4">
+                            <p class="text-white font-semibold text-lg mb-1">"Flood control corruption an obscene plunder of much-needed climate funds"</p>
+                            <p class="text-sm mb-2">Greenpeace Philippines (September 2025). Analysis of climate fund mismanagement.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm">Accessed November 20, 2025</a>
+                        </div>
+
+                        <div class="border-b border-slate-700 pb-4">
+                            <p class="text-white font-semibold text-lg mb-1">"Philippine flood-control projects made substandard to allow huge kickbacks"</p>
+                            <p class="text-sm mb-2">Associated Press (AP News, September 2025). Coverage of witness testimonies regarding substandard materials.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm">Accessed November 20, 2025</a>
+                        </div>
+
+                        <div class="border-b border-slate-700 pb-4">
+                            <p class="text-white font-semibold text-lg mb-1">"How flood control projects fail the poor in the Philippines"</p>
+                            <p class="text-sm mb-2">Context by TRF (September 2025). Investigation into the misalignment of projects vs. flood hazard areas.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm">Accessed November 20, 2025</a>
+                        </div>
+
+                         <div class="border-b border-slate-700 pb-4">
+                            <p class="text-white font-semibold text-lg mb-1">"Excessive Flooding in Metro Manila... and what can be done"</p>
+                            <p class="text-sm mb-2">Integrated Rural Development Foundation. Data on economic costs and alternative engineering solutions.</p>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm">Accessed November 20, 2025</a>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 pt-8 border-t border-slate-800 text-center text-sm">
+                        <p>Project for GEN 002 P3 Exam | A Web Journey: Political Consciousness</p>
+                        <p class="mt-2">© 2025 Student Group Name. All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- DARK MODE LOGIC ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            // Check if dark mode is currently on
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                // Switch to Light
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcons('light');
+            } else {
+                // Switch to Dark
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcons('dark');
+            }
+        }
+
+        // Helper to switch the icon between Sun and Moon
+        function updateThemeIcons(theme) {
+            const desktopIcon = document.getElementById('theme-icon-desktop');
+            const mobileIcon = document.getElementById('theme-icon-mobile');
+            const iconName = theme === 'dark' ? 'moon' : 'sun';
+            
+            // Re-render icons (Lucide method)
+            desktopIcon.setAttribute('data-lucide', iconName);
+            mobileIcon.setAttribute('data-lucide', iconName);
+            lucide.createIcons();
+        }
+
+        // Check for saved preference on load
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                updateThemeIcons('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeIcons('light');
+            }
+        })();
+
+
+        // --- WEATHER GENERATOR ---
+        
+        // 1. Generate Raindrops
+        const rainContainer = document.getElementById('rain-container');
+        const rainCount = 60; // Increased for better effect
+
+        for (let i = 0; i < rainCount; i++) {
+            const drop = document.createElement('div');
+            drop.classList.add('raindrop');
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 0.8 + 0.4 + 's'; 
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            rainContainer.appendChild(drop);
+        }
+
+        // 2. Realistic Canvas Lightning
+        const canvas = document.getElementById('lightning-canvas');
+        const ctx = canvas.getContext('2d');
+        const flashOverlay = document.getElementById('flash-overlay');
+
+        let lightningBolts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class LightningBolt {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.segments = [];
+                this.life = 10; // Frames to live
+                this.generateSegments(x, y, 7);
+            }
+
+            generateSegments(startX, startY, strength) {
+                let currentX = startX;
+                let currentY = startY;
+
+                while (currentY < canvas.height && strength > 0) {
+                    const length = Math.random() * 30 + 10;
+                    const angle = (Math.random() - 0.5) * 1.5; // Irregular zig zag
+                    
+                    const nextX = currentX + Math.sin(angle) * length;
+                    const nextY = currentY + Math.cos(angle) * length;
+
+                    this.segments.push({x1: currentX, y1: currentY, x2: nextX, y2: nextY, alpha: 1});
+
+                    // Branching chance
+                    if (Math.random() < 0.2) {
+                         // Recursive branch
+                         this.generateBranch(currentX, currentY, strength - 2);
+                    }
+
+                    currentX = nextX;
+                    currentY = nextY;
+                }
+            }
+
+            generateBranch(startX, startY, strength) {
+                 // Simplified branch logic stored in same array for easier drawing
+                 let currentX = startX;
+                 let currentY = startY;
+                 let branchLength = 0;
+                 
+                 while (branchLength < 150 && currentY < canvas.height) { // Shorter branches
+                    const length = Math.random() * 20 + 5;
+                    const angle = (Math.random() - 0.5) * 2; 
+                    const nextX = currentX + Math.sin(angle) * length;
+                    const nextY = currentY + Math.cos(angle) * length;
+                    
+                    this.segments.push({x1: currentX, y1: currentY, x2: nextX, y2: nextY, alpha: 0.7});
+                    
+                    currentX = nextX;
+                    currentY = nextY;
+                    branchLength += length;
+                 }
+            }
+
+            draw() {
+                this.life--;
+                ctx.beginPath();
+                this.segments.forEach(seg => {
+                    ctx.moveTo(seg.x1, seg.y1);
+                    ctx.lineTo(seg.x2, seg.y2);
+                });
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.life / 10})`;
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "white";
+                ctx.stroke();
+            }
+        }
+
+        function triggerLightning() {
+            // Create a bolt
+            const randomX = Math.random() * canvas.width;
+            lightningBolts.push(new LightningBolt(randomX, 0));
+
+            // Flash screen
+            flashOverlay.style.opacity = 0.5;
+            setTimeout(() => { flashOverlay.style.opacity = 0; }, 50);
+            setTimeout(() => { flashOverlay.style.opacity = 0.2; }, 100); // Double flash
+            setTimeout(() => { flashOverlay.style.opacity = 0; }, 150);
+
+            // Schedule next
+            const nextTime = Math.random() * 4000 + 2000;
+            setTimeout(triggerLightning, nextTime);
+        }
+
+        function animateLightning() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Filter dead bolts
+            lightningBolts = lightningBolts.filter(bolt => bolt.life > 0);
+            
+            lightningBolts.forEach(bolt => bolt.draw());
+            
+            requestAnimationFrame(animateLightning);
+        }
+
+        // Start systems
+        triggerLightning();
+        animateLightning();
+
+
+        // --- ROTATING GALLERY LOGIC (Existing) ---
+        let currentSlide = 0;
+        const slides = 3; 
+        const track = document.getElementById('gallery-track');
+        
+        function updateDots() {
+            for (let i = 0; i < slides; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentSlide) {
+                    dot.classList.remove('opacity-50');
+                    dot.classList.add('opacity-100');
+                } else {
+                    dot.classList.remove('opacity-100');
+                    dot.classList.add('opacity-50');
+                }
+            }
+        }
+
+        function showSlide(index) {
+            currentSlide = index;
+            if (currentSlide >= slides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = slides - 1;
+
+            const percent = currentSlide * -100;
+            track.style.transform = `translateX(${percent}%)`;
+            updateDots();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        setInterval(() => {
+            const analysisPage = document.getElementById('analysis');
+            if (analysisPage.classList.contains('active')) {
+                nextSlide();
+            }
+        }, 4000);
+
+        // --- SINGLE PAGE APPLICATION LOGIC (Existing) ---
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => page.classList.remove('active'));
+
+            const activePage = document.getElementById(pageId);
+            if (activePage) activePage.classList.add('active');
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-400'); 
+                link.classList.add('text-gray-300');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.remove('text-gray-300');
+                    link.classList.add('text-blue-400');
+                }
+            });
+
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            mobileLinks.forEach(link => {
+                link.classList.remove('text-blue-400', 'bg-slate-700/50');
+                link.classList.add('text-gray-300');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.remove('text-gray-300');
+                    link.classList.add('text-blue-400', 'bg-slate-700/50');
+                }
+            });
+
+            window.scrollTo(0, 0);
+
+            const menu = document.getElementById('mobile-menu');
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
