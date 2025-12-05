@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submerged Funds: Flood Control Crisis</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // This enables manual dark mode toggling
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Fade animation for page transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Custom animations for background blobs */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 6s infinite;
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        /* Utility to hide/show pages */
+        .page-section {
+            display: none;
+            min-height: calc(100vh - 64px); /* Full height minus nav */
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        /* --- WEATHER ANIMATIONS --- */
+
+        /* Rain */
+        .rain-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .raindrop {
+            position: absolute;
+            background-color: rgba(174, 194, 224, 0.6);
+            width: 2px;
+            height: 25px; /* Longer drops for heavier feel */
+            top: -30px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* Lightning Canvas */
+        #lightning-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Behind text, above rain */
+            pointer-events: none;
+        }
+
+        /* Flash Overlay */
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity 0.05s ease-out;
+        }
+
+        /* --- IMAGE WALKING ANIMATION --- */
+        .scene-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px; /* Increased height to accommodate the GIF */
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .walker-container {
+            position: absolute;
+            bottom: -20px;
+            left: -150px;
+            width: 115px; 
+            height: auto;
+            opacity: 0.9; 
+            /* Subtle drop shadow to make them stand out against the dark bg */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); 
+        }
+
+        /* Move the entire container across the screen */
+        .walk-across-1 { animation: walkAcross 25s linear infinite; }
+        /* Removed transform: scale(...) from below lines */
+        .walk-across-2 { animation: walkAcross 35s linear infinite; animation-delay: 12s; opacity: 0.7; }
+        .walk-across-3 { animation: walkAcross 28s linear infinite; animation-delay: 5s; opacity: 0.8; }
+
+        @keyframes walkAcross {
+            from { left: -150px; }
+            to { left: 110vw; }
+        }
+
+        .walker-image {
+            width: 100%;
+            height: auto;
+            /* No extra bobbing animation needed since it is a GIF */
+        }
+
+        /* --- LINK PREVIEW TOOLTIP STYLES --- */
+        #link-preview-tooltip {
+            pointer-events: none; /* Allows mouse to click things behind it if needed, mainly prevents flickering */
+            transition: opacity 0.2s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-200 flex flex-col min-h-screen transition-colors duration-300">
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 glass-nav text-white shadow-lg border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Site Title -->
+                <button onclick="showPage('home')" class="flex items-center space-x-2 font-bold text-xl tracking-tight hover:opacity-80 transition focus:outline-none">
+                    <i data-lucide="droplets" class="text-blue-400"></i>
+                    <span>Submerged<span class="text-blue-400">Funds</span></span>
+                </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <button onclick="showPage('home')" class="nav-link text-blue-400 flex items-center space-x-1 transition-colors" id="nav-home">
+                        <i data-lucide="droplets" size="18"></i>
+                        <span>Home</span>
+                    </button>
+                    <button onclick="showPage('profile')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-profile">
+                        <i data-lucide="users" size="18"></i>
+                        <span>Our Team</span>
+                    </button>
+                    <button onclick="showPage('analysis')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-analysis">
+                        <i data-lucide="shield-alert" size="18"></i>
+                        <span>The Issue</span>
+                    </button>
+                    <button onclick="showPage('solutions')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-solutions">
+                        <i data-lucide="lightbulb" size="18"></i>
+                        <span>Solutions</span>
+                    </button>
+                    <button onclick="showPage('sources')" class="nav-link text-gray-300 hover:text-blue-400 flex items-center space-x-1 transition-colors" id="nav-sources">
+                        <i data-lucide="book-open" size="18"></i>
+                        <span>Sources</span>
+                    </button>
+
+                    <!-- Dark Mode Toggle (Desktop) -->
+                    <button onclick="toggleTheme()" class="ml-4 p-2 rounded-full bg-slate-700 hover:bg-slate-600 text-yellow-400 transition-colors border border-slate-600" aria-label="Toggle Dark Mode">
+                        <i id="theme-icon-desktop" data-lucide="sun" size="18"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Controls -->
+                <div class="md:hidden flex items-center space-x-4">
+                    <!-- Dark Mode Toggle (Mobile) -->
+                    <button onclick="toggleTheme()" class="text-yellow-400 focus:outline-none">
+                        <i id="theme-icon-mobile" data-lucide="sun" size="20"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i data-lucide="menu" size="24"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 pb-4 px-4 shadow-inner absolute w-full top-16 left-0 z-40 border-t border-slate-700">
+            <button onclick="showPage('home')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-blue-400 bg-slate-700/50" id="mobile-nav-home">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="droplets" size="18"></i>
+                    <span>Home</span>
+                </span>
+            </button>
+            <button onclick="showPage('profile')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-profile">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="users" size="18"></i>
+                    <span>Our Team</span>
+                </span>
+            </button>
+            <button onclick="showPage('analysis')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-analysis">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="shield-alert" size="18"></i>
+                    <span>The Issue</span>
+                </span>
+            </button>
+            <button onclick="showPage('solutions')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-solutions">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="lightbulb" size="18"></i>
+                    <span>Solutions</span>
+                </span>
+            </button>
+            <button onclick="showPage('sources')" class="mobile-link block w-full text-left py-3 px-2 text-sm font-medium border-b border-slate-700 text-gray-300 hover:text-blue-400 hover:bg-slate-700/50" id="mobile-nav-sources">
+                <span class="flex items-center space-x-3">
+                    <i data-lucide="book-open" size="18"></i>
+                    <span>Sources</span>
+                </span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow relative">
+
+        <!-- PAGE: HOME -->
+        <section id="home" class="page-section active fade-in">
+            <!-- Hero Section -->
+            <div class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 text-white min-h-[calc(100vh-64px)] flex items-center justify-center overflow-hidden" id="hero-section">
+                
+                <!-- NEW: Realistic Lightning Components -->
+                <canvas id="lightning-canvas"></canvas>
+                <div id="flash-overlay" class="flash-overlay"></div>
+
+                <!-- NEW: Rain Container -->
+                <div id="rain-container" class="rain-container"></div>
+
+                <!-- Abstract Background Elements (Existing) -->
+                <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
+                    <div class="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full blur-3xl animate-pulse-slow"></div>
+                    <div class="absolute bottom-10 right-10 w-96 h-96 bg-cyan-600 rounded-full blur-3xl animate-pulse-slow"></div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="relative z-20 text-center px-6 max-w-4xl mx-auto">
+                    <div class="inline-block mb-4 px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-sm font-semibold tracking-wider uppercase">
+                        Political Consciousness Project
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tighter drop-shadow-lg">
+                        The Flood Control <br />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Crisis Analysis</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto font-light drop-shadow-md">
+                        Billions of pesos allocated. Thousands of projects planned. 
+                        <strong class="text-white font-semibold"> Why do the waters still rise?</strong>
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="showPage('analysis')" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/50 flex items-center justify-center cursor-pointer">
+                            Read the Analysis <i data-lucide="chevron-right" class="ml-2"></i>
+                        </button>
+                        <button onclick="showPage('profile')" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all border border-slate-500 flex items-center justify-center cursor-pointer">
+                            Meet the Team
+                        </button>
+                    </div>
+                    
+                    <!-- Scroll indicator -->
+                    <div class="mt-16 w-full flex justify-center animate-bounce opacity-50">
+                        <i data-lucide="chevron-down" class="text-white"></i>
+                    </div>
+                </div>
+
+                <!-- NEW: GIF Walking Animation Scene -->
+                <div class="scene-bottom">
+                    
+                    <!-- Walker 1 -->
+                    <div class="walker-container walk-across-1">
+                        <img src="https://img1.picmix.com/output/stamp/normal/9/8/0/3/1553089_01cae.gif" alt="Walking Silhouette" class="walker-image">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Project Overview & Disclaimer Section -->
+            <div class="bg-white dark:bg-slate-900 py-16 px-6 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-start">
+                    
+                    <!-- Project Overview -->
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg mr-4">
+                                <i data-lucide="info" size="24"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Project Overview</h2>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">The Philippine Flood Control Crisis</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-justify">
+                            This website is dedicated to analyzing the critical issues, controversies, and infrastructure challenges surrounding flood control measures in the Philippines. It aims to raise awareness about the impact of these issues on our communities and national development.
+                        </p>
+                    </div>
+
+                    <!-- Academic Disclaimer -->
+                    <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
+                        <div class="flex items-center mb-4">
+                            <div class="p-2 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg mr-3">
+                                <i data-lucide="graduation-cap" size="20"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Academic Disclaimer</h2>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 leading-relaxed">
+                            This platform was created in partial fulfillment of the requirements for the subject:
+                        </p>
+                        <div class="font-medium text-slate-800 dark:text-slate-100 border-l-4 border-blue-500 pl-4 py-2 bg-white dark:bg-slate-700 shadow-sm mb-4 rounded-r-md">
+                            GEN-002: Understanding the Self
+                        </div>
+                        
+                        <!-- NEW: Submitted by Section -->
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            <span class="font-semibold text-slate-700 dark:text-slate-300">Submitted by:</span> <br/>
+                            Team-Ang (BSN1-12)
+                        </div>
+
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-semibold text-slate-700 dark:text-slate-300">Submitted to:</span> <br/>
+                            Brittany Marcellano Ventura
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: PROFILE (REDESIGNED) -->
+        <section id="profile" class="page-section fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <div class="inline-block mb-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-full text-xs font-bold uppercase tracking-widest">
+                            The Minds Behind the Project
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">Meet Our Team</h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            We are students dedicated to bringing transparency to social issues. 
+                            Balancing academic rigor with personal well-being is part of our journey.
+                        </p>
+                    </div>
+                    
+                    <!-- Grid of 9 Members -->
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Member 1 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <!-- Banner -->
+                            <div class="h-24 bg-gradient-to-r from-blue-600 to-cyan-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <!-- Content -->
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <!-- Profile Pic -->
+                                <img src="https://i.imgur.com/plnDaBU.jpeg" alt="Manuel Casis" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Manuel Jhay F. Casis</h3>
+                                <span class="px-3 py-1 mt-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "If life gives you challenges, don’t rush to mend what’s broken — some wounds were made to teach you the language of survival."
+                                    </p>
+                                </div>
+
+                                <!-- Self Care Section (Footer Style) -->
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="heart-handshake" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Grow into new lessons, and set down the things that no longer echo who you are becoming.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 2 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-indigo-600 to-blue-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/Japqsvi.jpeg" alt="Vince Ivan" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Vince Ivan T. O'Francia</h3>
+                                <span class="px-3 py-1 mt-2 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Web Developer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Integrity is telling myself the truth. And honesty is telling the truth to other people."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="gamepad-2" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Playing video games with my friends during my free time.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 3 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-emerald-600 to-teal-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/AnkpaSm.jpeg" alt="Danica Quindara" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Danica Raisha B. Quindara</h3>
+                                <span class="px-3 py-1 mt-2 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Sometimes the path isn’t clearer—you just become brave enough to walk it."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="moon" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Sleeping.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 4 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-violet-600 to-fuchsia-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/ffDQsJQ.jpeg" alt="Elaine Daro" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Elaine C. Daro</h3>
+                                <span class="px-3 py-1 mt-2 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Success doesn't rush the greatest reward in the journey."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="music" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Listening to music to relax and boost my mood.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 5 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-rose-600 to-pink-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/VuCcUPz.jpeg" alt="Jhazmine Almis" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Jhazmine C. Almis</h3>
+                                <span class="px-3 py-1 mt-2 bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Befriend your imperfections. They are the stories that make you unique."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="tv" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Watch a movie or a funny TV show that requires no serious thought.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 6 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-sky-600 to-blue-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/GumExGI.jpeg" alt="King Joel" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">King Joel D. Marquez</h3>
+                                <span class="px-3 py-1 mt-2 bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Social media can be a force for good."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="mic-2" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Singing and Drawing.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 7 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-teal-600 to-cyan-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/aXM5jJM.jpeg" alt="Jewel Quilaton" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Jewel R. Quilaton</h3>
+                                <span class="px-3 py-1 mt-2 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Clarity comes when we seek truth, not convenience."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="headphones" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Listening to music during quiet moments.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 8 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-purple-600 to-pink-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/9Z0UQuX.jpeg" alt="Student 8" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Maria Mekylla V. Mangrobang </h3>
+                                <span class="px-3 py-1 mt-2 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "Great things are done by a series of small things brought together."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="music" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Listening to music.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 9 -->
+                        <div class="group bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                            <div class="h-24 bg-gradient-to-r from-orange-500 to-amber-500 relative">
+                                <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            </div>
+                            <div class="px-6 pb-6 pt-0 flex-grow flex flex-col items-center text-center -mt-12">
+                                <img src="https://i.imgur.com/OiCnf4g.jpeg" alt="Student 9" class="w-24 h-24 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md mb-4 z-10 bg-white">
+                                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Student Name 9</h3>
+                                <span class="px-3 py-1 mt-2 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-xs font-bold rounded-full uppercase tracking-wide">
+                                    Content Writer
+                                </span>
+                                <div class="mt-6 mb-6 relative px-4">
+                                    <i data-lucide="quote" class="absolute top-0 left-0 w-6 h-6 text-gray-200 dark:text-slate-700 -translate-x-2 -translate-y-2 fill-current"></i>
+                                    <p class="text-gray-600 dark:text-gray-300 italic text-sm relative z-10">
+                                        "The future belongs to those who believe in the beauty of their dreams."
+                                    </p>
+                                </div>
+                                <div class="mt-auto w-full bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-100 dark:border-slate-700/50">
+                                    <div class="flex items-center justify-center text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">
+                                        <i data-lucide="footprints" class="w-4 h-4 mr-1.5"></i> Self-Care Practice
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-200">
+                                        Taking a walk outside helps me clear my mind and feel refreshed.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: ANALYSIS -->
+        <section id="analysis" class="page-section fade-in bg-white dark:bg-slate-950 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    
+                    <!-- ROTATING GALLERY -->
+                    <div class="relative w-full mb-12 rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-slate-700 group">
+                        <!-- Slides Container -->
+                        <div id="gallery-track" class="flex transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                            
+                            <!-- Slide 1 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <!-- Placeholder Image Background -->
+                                <img src="https://media.philstar.com/photos/2025/08/20/53587085013212922326986872346892564175574088n_2025-08-20_14-56-11.jpg" alt="Flooding Evidence" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">Visual Evidence: Ghost Projects</h3>
+                                    <p class="text-gray-200">Sites in Bulacan flagged for having no structures despite 100% completion reports.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://philippinerevolution.nu/wp-content/uploads/2025/08/202508.bicol-flood-control-1024x637.jpg" alt="Incomplete Projects" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">"Chopped" Dikes in Sorsogon</h3>
+                                    <p class="text-gray-200">Unfinished dikes fail to protect rice fields due to corruption.</p>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 -->
+                            <div class="min-w-full relative h-64 sm:h-80 md:h-96 bg-slate-800 flex items-center justify-center">
+                                <img src="https://preview.redd.it/flood-control-projects-sa-hagonoy-at-bocaue-v0-ouaxfjwm92of1.jpeg?width=640&crop=smart&auto=webp&s=a80a5014897bfdde750dc382321e6a5c03c803a8" alt="Budget Chart" class="w-full h-full object-cover opacity-60">
+                                <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                                    <h3 class="text-2xl font-bold text-white">The Reality of 'Completed' Projects</h3>
+                                    <p class="text-gray-200">Current conditions in San Agustin, Hagonoy, contradict official records claiming flood control structures are 100% operational.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Gallery Controls -->
+                        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-left" size="24"></i>
+                        </button>
+                        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100">
+                            <i data-lucide="chevron-right" size="24"></i>
+                        </button>
+
+                        <!-- Dots Indicator -->
+                        <div class="absolute bottom-4 right-4 flex space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-white opacity-100" id="dot-0"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-1"></div>
+                            <div class="w-2 h-2 rounded-full bg-white opacity-50" id="dot-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12 border-l-4 border-blue-600 pl-6">
+                        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">The Issue: A Flood of Corruption?</h2>
+                        <p class="text-xl text-gray-500 dark:text-gray-400">An analysis of the Flood Control Scandal</p>
+                    </div>
+
+                    <div class="space-y-12">
+                        <!-- Intro -->
+                        <div class="prose max-w-none">
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                The greatest flood ravaging the Philippines isn't because of water, but of corruption. Recent investigations into the country's flood-control projects have revealed a staggering level of this corruption, with an estimated <span class="font-bold text-slate-900 dark:text-slate-100 bg-red-100 dark:bg-red-900/40 px-1 rounded">₱1.089 trillion</span> in climate-related public funds potentially lost since 2023 alone <a href="https://www.greenpeace.org/philippines/press/68522/flood-control-corruption-an-obscene-plunder-of-much-needed-climate-funds/" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Greenpeace Philippines, 2025)</a>. This massive leakage of the national budget represents a critical and ongoing challenge.
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                In the Philippine context, corruption is the abuse of entrusted power for private gain, a problem reflected in the country's low score of <strong class="text-slate-900 dark:text-white">34 out of 100</strong> on the 2023 Corruption Perceptions Index <a href="https://www.transparency.org/en/cpi/2023/index/phl%20U.S.%20Department%20of%20State.%20(2025).%202025%20Investment%20climate%20statements:%20Philippines" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Transparency International, 2024)</a>. This systemic issue severely hampers the nation's development by enabling the creation of substandard or non-existent public infrastructure, deterring foreign investment as noted by international observers <a href="https://www.state.gov/reports/2025-investment-climate-statements/philippines" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(U.S. Department of State, 2025)</a>, and degrading the essential services that protect and build the country's human capital.
+                            </p>
+                        </div>
+
+                        <!-- Subsection 1: Financial Hemorrhage -->
+                        <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+                                <i data-lucide="trending-up" class="text-red-500 mr-3"></i>
+                                Systemic Corruption & Financial Loss
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                This systematic corruption severely manipulates the allocation of government funds, particularly in infrastructure and flood control programs.
+                            </p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">Economic Cost:</strong> <a href="https://wealthinsights.metrobank.com.ph/bworldonline/economic-losses-from-anomalous-flood-control-projects-likely-hit-up-to-p119-billion-recto-says/" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">BusinessWorld (2025)</a> reports that suspected ghost flood control programs in the Philippines are estimated to have cost the economy between ₱42.3 billion and ₱118.5 billion between 2023 and 2025 due to irregularities and non-execution.
+                                    </span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">Definition of Graft:</strong> The Philippine Institute for Development Studies elaborates that graft is the siphoning off public funds and abuse of power that erodes public confidence and prevents the provision of basic services <a href="https://www.pids.gov.ph/details/the-problem-of-corruption-and-corruption-of-power?fbclid=IwY2xjawNYld9leHRuA2FlbQIxMQABHkkfOyPQcyC5j2axoo4teJ112XEoSliiZO94K77a9XCxbP075io_1vqx5kRo_aem_0yC_qHBDJrg0e0As1GhueQ" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Manhit, 2020)</a>.
+                                    </span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                    <span class="text-gray-700 dark:text-gray-300">
+                                        <strong class="text-slate-900 dark:text-white">Barangay Level Issues:</strong> <a href="https://www.ukdr.uplb.edu.ph/etd-undergrad/11461/?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExTWUzaHdGNzBDZXc0SVdSOAEea5Knz9QCZcGXRbt3RdqJa_L9g2Il3jnLAcF-kKobuy-3l8aePThC_lVmHCA_aem_RaBCFGEd9X77aKN94uoz5w" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Carrido (2024)</a> reported that most of the flood control initiatives at the barangay levels were found to be overpriced, abandoned, or built with substandard materials due to theft of funds for personal wants.
+                                    </span>
+                                </li>
+                            </ul>
+                            <p class="text-gray-700 dark:text-gray-300 mt-4 text-sm italic">
+                                And because of this, such ill-spent funds result in ineffective protection against floods, heightened exposure to floods, and slowed economic growth. The misallocation of government funds not just degrades infrastructure but also disables the country from reaching sustainable development.
+                            </p>
+                        </div>
+
+                        <!-- Subsection 2: Investor Confidence -->
+                        <div class="prose max-w-none">
+                             <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
+                                <i data-lucide="briefcase" class="text-blue-500 mr-3"></i>
+                                Loss of Investor Confidence
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                When government institutions are dominated by systemic corruption, both local and foreign investors lose confidence in the fairness and transparency of business dealings. A striking example of this loss of trust can be seen in <strong class="text-slate-900 dark:text-white">South Korea’s withdrawal of its ₱28.7 billion loan plan</strong> to the Philippines, a move that reflected concerns over corruption and governance issues, tarnishing the nation’s credibility and discouraging future financial partnerships <a href="https://globalnation.inquirer.net/291005/s-korea-stops-%E2%82%B128-7-billion-ph-loan-citing-risk-of-corruption" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Mendoza, 2025)</a>.
+                            </p>
+                        </div>
+
+                        <!-- Subsection 3: Ghost Projects Reality -->
+                        <div class="bg-orange-50 dark:bg-orange-900/20 p-8 rounded-2xl border border-orange-100 dark:border-orange-800 shadow-sm">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+                                <i data-lucide="ghost" class="text-orange-600 dark:text-orange-400 mr-3"></i>
+                                The Reality of "Ghost Projects"
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                This loss of international confidence, while diplomatically damaging, is merely a symptom of a far more destructive domestic reality. The "flood control scandal" that erupted between 2024 and 2025 has exposed that the withdrawal of foreign funds is a rational response to a system where infrastructure projects often exist only on paper.
+                            </p>
+                            <ul class="list-disc pl-6 space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>
+                                    <strong class="text-slate-900 dark:text-white">COA Investigations:</strong> Investigations by the Commission on Audit (COA) have validated these fears, uncovering a proliferation of "ghost projects," which refer to infrastructure that has been fully paid for but is physically non-existent.
+                                </li>
+                                <li>
+                                    <strong class="text-slate-900 dark:text-white">The Bulacan Case:</strong> In Bulacan province alone, state auditors flagged <span class="bg-yellow-200 dark:bg-yellow-800 text-slate-900 dark:text-white px-1 rounded">₱297 million</span> worth of flood control projects where inspectors found no structures at the approved sites, despite documents claiming 100% completion <a href="https://www.philstar.com/headlines/2025/11/29/2490731/p279-million-bulacan-flood-control-projects-flagged-ghost-or-relocated-coa" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Daguno-Bersamina, 2025)</a>.
+                                </li>
+                                <li>
+                                    <strong class="text-slate-900 dark:text-white">Fabricated Reports:</strong> These are not merely delayed projects; they are deliberate fabrications where funds are siphoned off through falsified accomplishment reports, leaving communities like Barangay San Nicolas in Hagonoy defenseless against rising tides <a href="https://newsinfo.inquirer.net/2148019/coa-flags-p297m-bulacan-flood-works-as-ghost-relocated-projects" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Baclig, 2025)</a>.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Subsection 4: Administrative Negligence -->
+                        <div class="prose max-w-none">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center">
+                                <i data-lucide="alert-triangle" class="text-yellow-500 mr-3"></i>
+                                Administrative Negligence: The Missing Master Plan
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                The crisis is compounded by a shocking admission of administrative negligence. Despite the expenditure of hundreds of billions of pesos, the Department of Public Works and Highways (DPWH) admitted during Senate hearings that the Philippines <strong class="text-slate-900 dark:text-white">still lacks an integrated, national flood control master plan</strong> <a href="https://www.abs-cbn.com/news/2024/8/1/philippines-lacks-flood-control-master-plan-dpwh-admits-1320" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Cruz, 2024)</a>.
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-4">
+                                The 5,500 completed projects touted by the administration were revealed to be "piecemeal" solutions, consisting of stand-alone walls or dikes that are not connected to a wider basin-level strategy <a href="https://opinion.inquirer.net/184479/metro-manilas-floods-a-story-of-neglect-and-missed-opportunities" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Maderazo, 2025)</a>. Without a master plan, flood control becomes a localized, politically driven enterprise rather than an engineering necessity. This fragmented approach explains why floodwaters are often simply diverted from one barangay to another, rather than being effectively managed or drained.
+                            </p>
+                        </div>
+
+                        <!-- Subsection 5: Agriculture & Engineering -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm">
+                            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+                                <i data-lucide="sprout" class="text-green-600 dark:text-green-400 mr-3"></i>
+                                The Cost to Agriculture & The Engineering Debate
+                            </h3>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-bold text-lg text-slate-900 dark:text-slate-100 mb-2">Impact on Farmers</h4>
+                                <p class="text-gray-700 dark:text-gray-300 text-sm mb-2">
+                                    The consequences of this "infrastructure of plunder" are most visibly suffered by the agricultural sector, which bears the brunt of every policy failure.
+                                </p>
+                                <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <li class="flex items-start">
+                                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                                        <span>In regions like Bicol and Central Luzon, the lack of effective water management has created a climate injustice where farmers face a double burden: they are flooded during typhoons and left without irrigation during dry spells.</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                                        <span>In Sorsogon, farmers' groups have reported that up to 60% of project funds are lost to corruption, resulting in "chopped" or unfinished dikes that fail to protect rice fields during critical harvest periods <a href="https://ndfp.info/bicol-farmers-investigate-corruption-in-regional-infrastructure-projects/" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Ang Bayan Ngayon, 2025)</a>.</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                                        <span>The ₱350 billion allocated for flood control could have funded massive irrigation networks to support food security; instead, the corruption of these funds leaves the agricultural heartland vulnerable to both drowning and drought <a href="https://kikopangilinan.com/kiko-laments-impact-of-failed-flood-control-projects-on-farms/" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Pangilinan, 2025)</a>.</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-900 dark:text-slate-100 mb-2">Hard vs. Soft Engineering</h4>
+                                <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">
+                                    Furthermore, the government’s continued reliance on capital-intensive "hard" engineering, such as concrete dikes and unverified dredging projects, runs contrary to modern scientific consensus. Experts from the University of the Philippines Resilience Institute (UPRI) argue that the obsession with concrete is misplaced, as these structures are often designed for outdated flood scenarios and fail catastrophically during extreme weather events like Typhoon Carina <a href="https://www.philstar.com/headlines/2025/08/24/2467641/solutions-backed-science-key-vs-floods-expert-says" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Macababbad, 2025)</a>.
+                                </p>
+                                <p class="text-gray-700 dark:text-gray-300 text-sm">
+                                    Dr. Mahar Lagmay emphasizes that genuine resilience requires "nature-based solutions," such as restoring watersheds and expanding mangrove forests, which are cost-effective and sustainable <a href="https://www.philstar.com/headlines/2025/08/24/2467641/solutions-backed-science-key-vs-floods-expert-says" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">(Macababbad, 2025)</a>. However, these solutions are often ignored by policymakers, likely because they offer fewer opportunities for the large-scale procurement contracts that fuel the kickback economy.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: SOLUTIONS -->
+        <section id="solutions" class="page-section fade-in bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 transition-colors duration-300">
+            <div class="py-20 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16 max-w-4xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">Recommendations & Solutions</h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-400">We propose a multi-faceted approach to fix the flood control crisis, moving from "patchwork politics" to science-based infrastructure.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Solution 1 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                            <div class="mb-6 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="monitor-check" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">National Flood Control Transparency Portal</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">The biggest enabler of the current scandal is the lack of visibility on project progress.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Prevent "ghost projects" by mandating a centralized digital portal where every project must have monthly geo-tagged photo updates proving construction progress.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 2 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-cyan-500"></div>
+                            <div class="mb-6 text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="map" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">River Basin-Based Budgeting</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Budgets are currently "sliced" into small district contracts, leading to uncoordinated, patchwork dikes.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Funding should follow the 18 Major River Basins Master Plan. Projects must be integrated across provinces rather than limited by political district boundaries.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 3 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                            <div class="mb-6 text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Fast-Track High-Impact Projects</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Major game-changers like the Parañaque Spillway have been delayed while billions are wasted on small dredging.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Prioritize securing ODA (e.g., JICA) for the Parañaque Spillway to drain Laguna de Bay directly to Manila Bay, bypassing the clogged Pasig River.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 4 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                            <div class="mb-6 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="users" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Citizen Participatory Audits</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">The Commission on Audit (COA) is understaffed and cannot physically inspect every dike in remote areas.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Accredit CSOs and local NGOs as "deputy auditors." Locals must sign a "Certificate of Reality" before final payments are released to contractors.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 5 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                            <div class="mb-6 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="sprout" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">"Sponge City" Ordinances</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Metro Manila is a concrete jungle that prevents rainwater from seeping into the ground.</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">Mandate Nature-Based Solutions (NbS): rainwater cisterns for subdivisions, permeable pavement for parking lots, and wetland restoration.</p>
+                            </div>
+                        </div>
+
+                        <!-- Solution 6 -->
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-all flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+                            <div class="mb-6 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i data-lucide="pen-tool" size="32"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Decouple Design & Construction</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 flex-grow">Contractors often influence designs to make them cheaper to build, leading to "politicized engineering."</p>
+                            <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <h4 class="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">The Fix</h4>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">The entity that designs the master plan should not be the one building it. Independent firms must design and supervise to ensure blueprint compliance.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE: SOURCES -->
+        <section id="sources" class="page-section fade-in bg-slate-900 text-gray-400">
+            <div class="py-20 px-6">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <i data-lucide="book-open" class="mr-3 text-blue-500"></i>
+                        References & Credible Sources
+                    </h2>
+                    <div class="space-y-6">
+
+                        <!-- Source 1 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.transparency.org/en/cpi/2023/index/phl" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                2023 Corruption Perceptions Index: The Philippines <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Transparency International</p>
+                            <span class="text-sm text-gray-500">Transparency International (2024)</span>
+
+                            <!-- APA Citation Box -->
+                            <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Transparency International. (2024). 2023 Corruption Perceptions Index: The Philippines. https://www.transparency.org/en/cpi/2023/index/phl
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 2 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.state.gov/reports/2025-investment-climate-statements/philippines" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                2025 Investment climate statements: Philippines <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">U.S. Department of State</p>
+                            <span class="text-sm text-gray-500">U.S. Department of State (2025)</span>
+
+                             <!-- APA Citation Box -->
+                            <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    U.S. Department of State. (2025). 2025 Investment climate statements: Philippines. https://www.state.gov/reports/2025-investment-climate-statements/philippines
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 3 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.ukdr.uplb.edu.ph/etd-undergrad/11461/?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExTWUzaHdGNzBDZXc0SVdSOAEea5Knz9QCZcGXRbt3RdqJa_L9g2Il3jnLAcF-kKobuy-3l8aePThC_lVmHCA_aem_RaBCFGEd9X77aKN94uoz5w" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Analyzing the Influence of Human Capital Investment on Unemployment in the Philippines <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">ukdr.uplb.edu.ph</p>
+                            <span class="text-sm text-gray-500">Carrido, M. (2024, June)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Carrido, M. (2024, June). Analyzing the Influence of Human Capital Investment on Unemployment in the Philippines. https://www.ukdr.uplb.edu.ph/etd-undergrad/11461/?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExTWUzaHdGNzBDZXc0SVdSOAEea5Knz9QCZcGXRbt3RdqJa_L9g2Il3jnLAcF-kKobuy-3l8aePThC_lVmHCA_aem_RaBCFGEd9X77aKN94uoz5w
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 4 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://ndfp.info/bicol-farmers-investigate-corruption-in-regional-infrastructure-projects/" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Bicol farmers investigate corruption in regional infrastructure projects <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">National Democratic Front of the Philippines</p>
+                            <span class="text-sm text-gray-500">Ang Bayan Ngayon (2025, August 24)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Ang Bayan Ngayon. (2025, August 24). Bicol farmers investigate corruption in regional infrastructure projects. National Democratic Front of the Philippines. https://ndfp.info/bicol-farmers-investigate-corruption-in-regional-infrastructure-projects/
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 5 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://newsinfo.inquirer.net/2148019/coa-flags-p297m-bulacan-flood-works-as-ghost-relocated-projects" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                COA flags P297M Bulacan Flood works as ‘ghost’, relocated projects <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Inquirer.net</p>
+                            <span class="text-sm text-gray-500">Baclig, C. (2025, November 28)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Baclig, C. (2025, November 28). COA flags P297M Bulacan Flood works as ‘ghost’, relocated projects. Inquirer.net. https://newsinfo.inquirer.net/2148019/coa-flags-p297m-bulacan-flood-works-as-ghost-relocated-projects
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 6 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://wealthinsights.metrobank.com.ph/bworldonline/economic-losses-from-anomalous-flood-control-projects-likely-hit-up-to-p119-billion-recto-says/" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Economic losses from anomalous flood control projects likely up to PHP 119B, Recto says <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Metrobank Wealth Insights</p>
+                            <span class="text-sm text-gray-500">BusinessWorld (2025)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    BusinessWorld. (2025). Economic losses from anomalous flood control projects likely up to PHP 119B, Recto says | Metrobank Wealth Insights. Metrobank Wealth Insights. https://wealthinsights.metrobank.com.ph/bworldonline/economic-losses-from-anomalous-flood-control-projects-likely-hit-up-to-p119-billion-recto-says/
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 7 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.greenpeace.org/philippines/press/68522/flood-control-corruption-an-obscene-plunder-of-much-needed-climate-funds/" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Flood control corruption an obscene plunder of much-needed climate funds <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Greenpeace Philippines</p>
+                            <span class="text-sm text-gray-500">Greenpeace Philippines (2025b, September 8)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Greenpeace Philippines. (2025b, September 8). Flood control corruption an obscene plunder of much-needed climate funds–Greenpeace - Greenpeace Philippines. https://www.greenpeace.org/philippines/press/68522/flood-control-corruption-an-obscene-plunder-of-much-needed-climate-funds/
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 8 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://kikopangilinan.com/kiko-laments-impact-of-failed-flood-control-projects-on-farms/" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Kiko laments impact of failed flood control projects on farms <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">kikopangilinan.com</p>
+                            <span class="text-sm text-gray-500">Pangilinan, F. (2025, September 17)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Pangilinan, F. (2025, September 17). Kiko laments impact of failed flood control projects on farms. kikopangilinan.com. https://kikopangilinan.com/kiko-laments-impact-of-failed-flood-control-projects-on-farms/
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 9 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://opinion.inquirer.net/184479/metro-manilas-floods-a-story-of-neglect-and-missed-opportunities" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Metro Manila’s Floods: a story of neglect and missed opportunities <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Inquirer.net</p>
+                            <span class="text-sm text-gray-500">Maderazo, J. (2025, July 8)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Maderazo, J. (2025, July 8). Metro Manila’s Floods: a story of neglect and missed opportunities. Inquirer.net. https://opinion.inquirer.net/184479/metro-manilas-floods-a-story-of-neglect-and-missed-opportunities
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 10 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.philstar.com/headlines/2025/11/29/2490731/p279-million-bulacan-flood-control-projects-flagged-ghost-or-relocated-coa" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                P279-million Bulacan flood control projects flagged as ‘ghost’ or relocated — COA <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Philstar.com</p>
+                            <span class="text-sm text-gray-500">Daguno-Bersamina, K. (2025, November 29)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Daguno-Bersamina, K. (2025, November 29). P279-million Bulacan flood control projects flagged as ‘ghost’ or relocated — COA. Philstar.com. https://www.philstar.com/headlines/2025/11/29/2490731/p279-million-bulacan-flood-control-projects-flagged-ghost-or-relocated-coa
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 11 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.abs-cbn.com/news/2024/8/1/philippines-lacks-flood-control-master-plan-dpwh-admits-1320" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Philippines lacks flood control master plan, DPWH admits <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">ABS-CBN News</p>
+                            <span class="text-sm text-gray-500">Cruz, R. (2024, November 20)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Cruz, R. (2024, November 20). Philippines lacks flood control master plan, DPWH admits | ABS-CBN News. ABS-CBN. https://www.abs-cbn.com/news/2024/8/1/philippines-lacks-flood-control-master-plan-dpwh-admits-1320
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 12 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://globalnation.inquirer.net/291005/s-korea-stops-%E2%82%B128-7-billion-ph-loan-citing-risk-of-corruption" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                S. Korea stops P28.7 billion PH loan, citing risk of corruption <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Inquirer.net</p>
+                            <span class="text-sm text-gray-500">Mendoza, J. E. (2025)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Mendoza, J. E. (2025). S. Korea stops P28.7 billion PH loan, citing risk of corruption. Inquirer.net. https://globalnation.inquirer.net/291005/s-korea-stops-%E2%82%B128-7-billion-ph-loan-citing-risk-of-corruption?
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 13 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.philstar.com/headlines/2025/08/24/2467641/solutions-backed-science-key-vs-floods-expert-says" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                Solutions backed by science key vs floods, expert says <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">Philstar.com</p>
+                            <span class="text-sm text-gray-500">Macababbad, E. (2025, August 23)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Macababbad, E. (2025, August 23). Solutions backed by science key vs floods, expert says. Philstar.com. https://www.philstar.com/headlines/2025/08/24/2467641/solutions-backed-science-key-vs-floods-expert-says
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Source 14 -->
+                        <div class="border-b border-slate-700 pb-6">
+                            <a href="https://www.pids.gov.ph/details/the-problem-of-corruption-and-corruption-of-power?fbclid=IwY2xjawNYld9leHRuA2FlbQIxMQABHkkfOyPQcyC5j2axoo4teJ112XEoSliiZO94K77a9XCxbP075io_1vqx5kRo_aem_0yC_qHBDJrg0e0As1GhueQ" target="_blank" class="block text-white font-semibold text-lg mb-1 hover:text-blue-400 transition-colors">
+                                The problem of corruption and corruption of power <i data-lucide="external-link" class="inline w-4 h-4 ml-1 opacity-50"></i>
+                            </a>
+                            <p class="text-sm mb-2 font-medium text-blue-300">pids.gov.ph</p>
+                            <span class="text-sm text-gray-500">Manhit, V. A. (2020)</span>
+
+                             <!-- APA Citation Box -->
+                             <div class="mt-3 p-3 bg-slate-800/50 border border-slate-700 rounded-lg">
+                                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-1">APA Citation</p>
+                                <p class="text-xs text-slate-400 font-mono break-words italic">
+                                    Manhit, V. A. (2020). The problem of corruption and corruption of power. https://www.pids.gov.ph/details/the-problem-of-corruption-and-corruption-of-power?fbclid=IwY2xjawNYld9leHRuA2FlbQIxMQABHkkfOyPQcyC5j2axoo4teJ112XEoSliiZO94K77a9XCxbP075io_1vqx5kRo_aem_0yC_qHBDJrg0e0As1GhueQ
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="mt-12 pt-8 border-t border-slate-800 text-center text-sm">
+                        <p>Project for GEN 002 P3 Exam | A Web Journey: Political Consciousness</p>
+                        <p class="mt-2">© 2025 Team-Ang (BSN1-12). All Rights Reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- DARK MODE LOGIC ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            // Check if dark mode is currently on
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                // Switch to Light
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateThemeIcons('light');
+            } else {
+                // Switch to Dark
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcons('dark');
+            }
+        }
+
+        // Helper to switch the icon between Sun and Moon
+        function updateThemeIcons(theme) {
+            const desktopIcon = document.getElementById('theme-icon-desktop');
+            const mobileIcon = document.getElementById('theme-icon-mobile');
+            const iconName = theme === 'dark' ? 'moon' : 'sun';
+            
+            // Re-render icons (Lucide method)
+            desktopIcon.setAttribute('data-lucide', iconName);
+            mobileIcon.setAttribute('data-lucide', iconName);
+            lucide.createIcons();
+        }
+
+        // Check for saved preference on load
+        (function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                updateThemeIcons('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeIcons('light');
+            }
+        })();
+
+
+        // --- WEATHER GENERATOR ---
+        
+        // 1. Generate Raindrops
+        const rainContainer = document.getElementById('rain-container');
+        const rainCount = 60; // Increased for better effect
+
+        for (let i = 0; i < rainCount; i++) {
+            const drop = document.createElement('div');
+            drop.classList.add('raindrop');
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = Math.random() * 0.8 + 0.4 + 's'; 
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            rainContainer.appendChild(drop);
+        }
+
+        // 2. Realistic Canvas Lightning
+        const canvas = document.getElementById('lightning-canvas');
+        const ctx = canvas.getContext('2d');
+        const flashOverlay = document.getElementById('flash-overlay');
+
+        let lightningBolts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class LightningBolt {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.segments = [];
+                this.life = 10; // Frames to live
+                this.generateSegments(x, y, 7);
+            }
+
+            generateSegments(startX, startY, strength) {
+                let currentX = startX;
+                let currentY = startY;
+
+                while (currentY < canvas.height && strength > 0) {
+                    const length = Math.random() * 30 + 10;
+                    const angle = (Math.random() - 0.5) * 1.5; // Irregular zig zag
+                    
+                    const nextX = currentX + Math.sin(angle) * length;
+                    const nextY = currentY + Math.cos(angle) * length;
+
+                    this.segments.push({x1: currentX, y1: currentY, x2: nextX, y2: nextY, alpha: 1});
+
+                    // Branching chance
+                    if (Math.random() < 0.2) {
+                         // Recursive branch
+                         this.generateBranch(currentX, currentY, strength - 2);
+                    }
+
+                    currentX = nextX;
+                    currentY = nextY;
+                }
+            }
+
+            generateBranch(startX, startY, strength) {
+                 // Simplified branch logic stored in same array for easier drawing
+                 let currentX = startX;
+                 let currentY = startY;
+                 let branchLength = 0;
+                 
+                 while (branchLength < 150 && currentY < canvas.height) { // Shorter branches
+                    const length = Math.random() * 20 + 5;
+                    const angle = (Math.random() - 0.5) * 2; 
+                    const nextX = currentX + Math.sin(angle) * length;
+                    const nextY = currentY + Math.cos(angle) * length;
+                    
+                    this.segments.push({x1: currentX, y1: currentY, x2: nextX, y2: nextY, alpha: 0.7});
+                    
+                    currentX = nextX;
+                    currentY = nextY;
+                    branchLength += length;
+                 }
+            }
+
+            draw() {
+                this.life--;
+                ctx.beginPath();
+                this.segments.forEach(seg => {
+                    ctx.moveTo(seg.x1, seg.y1);
+                    ctx.lineTo(seg.x2, seg.y2);
+                });
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.life / 10})`;
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "white";
+                ctx.stroke();
+            }
+        }
+
+        function triggerLightning() {
+            // Create a bolt
+            const randomX = Math.random() * canvas.width;
+            lightningBolts.push(new LightningBolt(randomX, 0));
+
+            // Flash screen
+            flashOverlay.style.opacity = 0.5;
+            setTimeout(() => { flashOverlay.style.opacity = 0; }, 50);
+            setTimeout(() => { flashOverlay.style.opacity = 0.2; }, 100); // Double flash
+            setTimeout(() => { flashOverlay.style.opacity = 0; }, 150);
+
+            // Schedule next
+            const nextTime = Math.random() * 4000 + 2000;
+            setTimeout(triggerLightning, nextTime);
+        }
+
+        function animateLightning() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Filter dead bolts
+            lightningBolts = lightningBolts.filter(bolt => bolt.life > 0);
+            
+            lightningBolts.forEach(bolt => bolt.draw());
+            
+            requestAnimationFrame(animateLightning);
+        }
+
+        // Start systems
+        triggerLightning();
+        animateLightning();
+
+
+        // --- ROTATING GALLERY LOGIC (Existing) ---
+        let currentSlide = 0;
+        const slides = 3; 
+        const track = document.getElementById('gallery-track');
+        
+        function updateDots() {
+            for (let i = 0; i < slides; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentSlide) {
+                    dot.classList.remove('opacity-50');
+                    dot.classList.add('opacity-100');
+                } else {
+                    dot.classList.remove('opacity-100');
+                    dot.classList.add('opacity-50');
+                }
+            }
+        }
+
+        function showSlide(index) {
+            currentSlide = index;
+            if (currentSlide >= slides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = slides - 1;
+
+            const percent = currentSlide * -100;
+            track.style.transform = `translateX(${percent}%)`;
+            updateDots();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        setInterval(() => {
+            const analysisPage = document.getElementById('analysis');
+            if (analysisPage.classList.contains('active')) {
+                nextSlide();
+            }
+        }, 10000); // UPDATED: Changed from 4000 to 10000 (10 seconds)
+
+        // --- SINGLE PAGE APPLICATION LOGIC (Existing) ---
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => page.classList.remove('active'));
+
+            const activePage = document.getElementById(pageId);
+            if (activePage) activePage.classList.add('active');
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-400'); 
+                link.classList.add('text-gray-300');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.remove('text-gray-300');
+                    link.classList.add('text-blue-400');
+                }
+            });
+
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            mobileLinks.forEach(link => {
+                link.classList.remove('text-blue-400', 'bg-slate-700/50');
+                link.classList.add('text-gray-300');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.remove('text-gray-300');
+                    link.classList.add('text-blue-400', 'bg-slate-700/50');
+                }
+            });
+
+            window.scrollTo(0, 0);
+
+            const menu = document.getElementById('mobile-menu');
+            if (!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+
+        // ------------------------------------------------------------------
+        // NEW CODE: LINK PREVIEW HOVER FEATURE
+        // ------------------------------------------------------------------
+        
+        // 1. Create the tooltip element dynamically
+        const previewTooltip = document.createElement('div');
+        previewTooltip.id = 'link-preview-tooltip';
+        // Tailwind classes for styling the little popup box
+        previewTooltip.className = 'fixed z-50 w-80 h-48 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden transform -translate-x-1/2 mt-4';
+        
+        // Add content structure (Loading Spinner + Image)
+        previewTooltip.innerHTML = `
+            <div id="preview-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-400">
+                <i data-lucide="loader-2" class="animate-spin mb-2"></i>
+                <span class="text-xs">Loading Preview...</span>
+            </div>
+            <img id="preview-image" src="" alt="Site Preview" class="w-full h-full object-cover hidden">
+            <div id="preview-error" class="absolute inset-0 flex flex-col items-center justify-center bg-red-50 dark:bg-red-900/20 text-red-400 hidden">
+                <i data-lucide="alert-circle" class="mb-2"></i>
+                <span class="text-xs">Preview Unavailable</span>
+            </div>
+        `;
+        document.body.appendChild(previewTooltip);
+
+        // 2. Select only links inside "The Issue" section
+        const analysisLinks = document.querySelectorAll('#analysis a');
+
+        // 3. Add Hover Event Listeners
+        analysisLinks.forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                const url = link.href;
+                if (!url) return;
+
+                const img = document.getElementById('preview-image');
+                const loader = document.getElementById('preview-loader');
+                const error = document.getElementById('preview-error');
+
+                // Reset State
+                img.classList.add('hidden');
+                error.classList.add('hidden');
+                loader.classList.remove('hidden');
+
+                // Show Tooltip
+                previewTooltip.classList.remove('hidden');
+                lucide.createIcons(); // Refresh icons in the tooltip
+
+                // Set image source to WordPress mShots service (Free screenshot API)
+                // We use encodeURIComponent to make the URL safe to send
+                img.src = `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=600`;
+
+                // Handle Image Load Success
+                img.onload = function() {
+                    loader.classList.add('hidden');
+                    img.classList.remove('hidden');
+                };
+
+                // Handle Image Load Error
+                img.onerror = function() {
+                    loader.classList.add('hidden');
+                    error.classList.remove('hidden');
+                };
+
+                positionTooltip(e);
+            });
+
+            link.addEventListener('mousemove', (e) => {
+                positionTooltip(e);
+            });
+
+            link.addEventListener('mouseleave', () => {
+                previewTooltip.classList.add('hidden');
+                // Clear src to stop loading if mouse leaves quickly
+                document.getElementById('preview-image').src = '';
+            });
+        });
+
+        // 4. Helper Function to move tooltip with mouse
+        function positionTooltip(e) {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Basic positioning below the cursor
+            // Note: 'fixed' position uses viewport coordinates (clientX/Y)
+            
+            // Check if it's going off the right side of the screen
+            // If mouse is on the far right (greater than window width - 200px), shift left
+            if (x > window.innerWidth - 180) {
+                 previewTooltip.style.left = (x - 150) + 'px';
+            } else {
+                 previewTooltip.style.left = x + 'px';
+            }
+
+            // Check if it's going off the bottom
+            if (y > window.innerHeight - 250) {
+                // Show above cursor
+                previewTooltip.style.top = (y - 210) + 'px';
+            } else {
+                // Show below cursor
+                previewTooltip.style.top = (y + 20) + 'px';
+            }
+        }
+
+    </script>
+</body>
+</html>
